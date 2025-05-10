@@ -44,6 +44,8 @@ export class Bootstrap extends Phaser.Scene {
             "assets/characters/adam/adam_anim.json"
         );
         this.load.tilemapTiledJSON("map", "/assets/map/map.json");
+
+        // Load all tileset images
         this.load.spritesheet("chair", "assets/items/chair.png", {
             frameWidth: 32,
             frameHeight: 32,
@@ -68,7 +70,16 @@ export class Bootstrap extends Phaser.Scene {
             frameWidth: 32,
             frameHeight: 32,
         });
-        this.load.spritesheet("chair", "assets/items/chair.png", {
+        this.load.spritesheet("computer", "assets/items/computer.png", {
+            frameWidth: 32,
+            frameHeight: 32,
+        });
+        this.load.spritesheet("vendingmachine", "assets/items/vendingmachine.png", {
+            frameWidth: 32,
+            frameHeight: 32,
+        });
+        // Classroom tileset if needed
+        this.load.spritesheet("classroom_library", "assets/tileset/Classroom_and_library.png", {
             frameWidth: 32,
             frameHeight: 32,
         });

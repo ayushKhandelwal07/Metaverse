@@ -231,17 +231,53 @@ export class GameScene extends Phaser.Scene {
         // Create tilemap
         this.input.keyboard.disableGlobalCapture();
         this.map = this.make.tilemap({ key: "map" });
-        const tileset = this.map.addTilesetImage(
-            "FloorAndGround",
-            "ground_tiles"
-        );
-
-        // Create layer and scale it
-        this.mapLayer = this.map.createLayer("Ground", tileset);
-
-        // Set collisions for tiles with the collides property
-        this.mapLayer.setCollisionByProperty({ collides: true });
-        this.mapLayer.setPosition(0, 0);
+        
+        // Debug log to check the exact layer names in the map
+        console.log("Available map layers:", this.map.layers.map(l => l.name));
+        
+        // Load tilesets
+        const floorAndGroundTileset = this.map.addTilesetImage("FloorAndGround", "ground_tiles");
+        const basementTileset = this.map.addTilesetImage("Basement", "basement");
+        const genericTileset = this.map.addTilesetImage("Generic", "generic");
+        const modernOfficeTileset = this.map.addTilesetImage("Modern_Office_Black_Shadow", "modern_office");
+        const chairTileset = this.map.addTilesetImage("chair", "chair");
+        const whiteboardTileset = this.map.addTilesetImage("whiteboard", "whiteboard");
+        
+        // Create array of valid tilesets (filter out any that failed to load)
+        const tilesets = [
+            floorAndGroundTileset,
+            basementTileset,
+            genericTileset,
+            modernOfficeTileset,
+            chairTileset,
+            whiteboardTileset
+        ].filter(Boolean);
+        
+        // Create layers with exact names from the map
+        const groundLayer = this.map.createLayer("Ground", tilesets);
+        groundLayer.setCollisionByProperty({ collides: true });
+        
+        try {
+            // Use the exact layer names from the map.json file
+            const secondLayer = this.map.createLayer("Second_layer", tilesets);
+            const thirdLayer = this.map.createLayer("third_layer", tilesets);
+            
+            // Set depth for proper rendering order
+            groundLayer.setDepth(0);
+            secondLayer.setDepth(1);
+            thirdLayer.setDepth(2);
+            
+            // Position all layers at the same coordinates
+            groundLayer.setPosition(0, 0);
+            secondLayer.setPosition(0, 0);
+            thirdLayer.setPosition(0, 0);
+            
+            console.log("All three layers loaded successfully!");
+        } catch (e) {
+            console.error("Error creating layers:", e);
+        }
+        
+        this.mapLayer = groundLayer; // Use ground layer for collisions
 
         this.cursorKeys = this.input.keyboard.createCursorKeys();
 
