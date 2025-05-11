@@ -53,7 +53,7 @@ const JoinCustomRoom = ({
     };
 
     return (
-        <Card>
+        <Card className="card-with-bg">
             <CardHeader>
                 <CardTitle className="relative text-2xl text-center">
                     <ArrowLeft

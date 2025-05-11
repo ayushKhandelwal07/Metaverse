@@ -3,6 +3,7 @@ import RoomDecider from "./RoomDecider";
 import PublicRoom from "./PublicRoom";
 import JoinOrCreateCustomRoom from "./JoinOrCreateCustomRoom";
 import { CarouselApi } from "../ui/carousel";
+import bgImage from "./bg-metaverse.png";
 
 const RoomSelection = () => {
     const [showPublicRoom, setShowPublicRoom] = useState(false);
@@ -24,7 +25,15 @@ const RoomSelection = () => {
     };
 
     return (
-        <div className="w-screen h-screen bg-zinc-50 absolute left-0 top-0 flex flex-col gap-2 items-center justify-center">
+        <div 
+            className="w-screen h-screen absolute left-0 top-0 flex flex-col gap-2 items-center justify-center"
+            style={{
+                backgroundImage: `url(${bgImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+            }}
+        >
             {showPublicRoom ? (
                 <PublicRoom
                     setCarouselApi={setCarouselApi as () => void}

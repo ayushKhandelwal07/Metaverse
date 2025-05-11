@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
+
 const RoomDecider = ({
     setShowPublicRoom,
     setShowCreateOrJoinCustomRoom,
@@ -35,7 +36,7 @@ const RoomDecider = ({
             <Card className="w-full max-w-sm">
                 <CardHeader>
                     <CardTitle className="text-2xl text-center">
-                        Welcome to CaveVerse
+                        Welcome to Metaverse
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-4">

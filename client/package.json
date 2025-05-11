@@ -1,6 +1,6 @@
 {
     "name": "client",
-    "description": "Frontend for CaveVerse",
+    "description": "Frontend for Metaverse",
     "version": "1.0.3",
     "type": "module",
     "scripts": {

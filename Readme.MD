@@ -1,6 +1,6 @@
-# CaveVerse
+# Metaverse
 
-Hey there! 👋 Welcome to CaveVerse — a fun 2D world where you can walk around, meet people, and hang out.
+Hey there! 👋 Welcome to Metaverse — a fun 2D world where you can walk around, meet people, and hang out.
 Chat, chill, work together, or just vibe in your own virtual space.
 
 It is built using:

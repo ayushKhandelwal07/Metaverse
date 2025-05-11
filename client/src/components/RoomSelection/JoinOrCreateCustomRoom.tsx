@@ -66,7 +66,7 @@ const JoinOrCreateCustomRoom = ({
     }
 
     return (
-        <Card className="w-full max-w-2xl">
+        <Card className="w-full max-w-2xl card-with-bg">
             <CardHeader>
                 <CardTitle className="text-2xl relative text-center">
                     <ArrowLeft
