@@ -9,6 +9,8 @@ export class GameScene extends Phaser.Scene {
     private static EPSILON = 0.5;
 
     private mapLayer: Phaser.Tilemaps.TilemapLayer;
+    private secondLayer?: Phaser.Tilemaps.TilemapLayer;
+    private thirdLayer?: Phaser.Tilemaps.TilemapLayer;
     private map!: Phaser.Tilemaps.Tilemap;
     private network: Network;
     private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -115,7 +117,18 @@ export class GameScene extends Phaser.Scene {
             this.cursorKeys
         );
 
+        // Add collision with all map layers
         this.physics.add.collider(this.myPlayer, this.mapLayer);
+        
+        // Add collision with second and third layers if they exist
+        if (this.secondLayer) {
+            this.physics.add.collider(this.myPlayer, this.secondLayer);
+        }
+        
+        if (this.thirdLayer) {
+            this.physics.add.collider(this.myPlayer, this.thirdLayer);
+        }
+        
         this.cameras.main.startFollow(this.myPlayer);
         this.cameras.main.zoom = 1.7;
         this.loadObjectsFromTiled();
@@ -123,7 +136,7 @@ export class GameScene extends Phaser.Scene {
         this.myPlayer.initializePeers();
     }
 
-    private handlePlayerJoined(player: any, sessionId: string) {
+    private handlePlayerJoined(player: { anim: string; x: number; y: number; username: string; isMicOn: boolean; isWebcamOn: boolean; onChange: (callback: () => void) => void; isDisconnected: boolean; }, sessionId: string) {
         const character = player.anim.split("_")[0]; // extracting character from the animation
 
         const entity = new Player(
@@ -140,6 +153,18 @@ export class GameScene extends Phaser.Scene {
 
         // Store the entity reference
         this.otherPlayers.set(sessionId, entity);
+        
+        // Add collision with all map layers for other players
+        this.physics.add.collider(entity, this.mapLayer);
+        
+        // Add collision with second and third layers if they exist
+        if (this.secondLayer) {
+            this.physics.add.collider(entity, this.secondLayer);
+        }
+        
+        if (this.thirdLayer) {
+            this.physics.add.collider(entity, this.thirdLayer);
+        }
 
         player.onChange(() => {
             entity.setData("serverX", player.x);
@@ -261,6 +286,25 @@ export class GameScene extends Phaser.Scene {
             // Use the exact layer names from the map.json file
             const secondLayer = this.map.createLayer("Second_layer", tilesets);
             const thirdLayer = this.map.createLayer("third_layer", tilesets);
+
+            // Enable collision by properties for second and third layers
+            secondLayer.setCollisionByProperty({ collides: true });
+            thirdLayer.setCollisionByProperty({ collides: true });
+            
+            // Alternative approach: Set collisions for ALL tiles in these layers
+            // If collides property is not working, we'll force collision on all non-empty tiles
+            secondLayer.setCollisionByExclusion([-1]); // -1 is empty tiles
+            thirdLayer.setCollisionByExclusion([-1]);
+            
+            // Log number of collidable tiles found
+            const collidableTilesSecond = secondLayer.filterTiles(tile => tile.properties?.collides === true).length;
+            const collidableTilesThird = thirdLayer.filterTiles(tile => tile.properties?.collides === true).length;
+            console.log(`Found ${collidableTilesSecond} collidable tiles in second layer`);
+            console.log(`Found ${collidableTilesThird} collidable tiles in third layer`);
+            
+            // Store references to layers for collision detection
+            this.secondLayer = secondLayer;
+            this.thirdLayer = thirdLayer;
             
             // Set depth for proper rendering order
             groundLayer.setDepth(0);
@@ -277,7 +321,7 @@ export class GameScene extends Phaser.Scene {
             console.error("Error creating layers:", e);
         }
         
-        this.mapLayer = groundLayer; // Use ground layer for collisions
+        this.mapLayer = groundLayer; // Main collision layer
 
         this.cursorKeys = this.input.keyboard.createCursorKeys();
 
