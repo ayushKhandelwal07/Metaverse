@@ -34,7 +34,9 @@ jobs:
             # Clone the repository
             echo "📂 Cloning repository..."
             git clone https://github.com/ayushKhandelwal07/Metaverse.git
-            cd Metaverse/server
+            ls
+            cd Metaverse
+            cd server
             
             # Install dependencies
             echo "📦 Installing dependencies..."
