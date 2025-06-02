@@ -324,7 +324,7 @@ export class MyRoom extends Room<MyRoomState> {
         const player = new Player();
 
         player.x = 550;
-        player.y = 820;
+        player.y = 150;
         player.username = options.username;
         player.anim = `${options.character}_down_idle`;
         player.isMicOn = options.isMicOn;
