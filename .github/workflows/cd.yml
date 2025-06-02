@@ -1,0 +1,58 @@
+name: Push-to-EC2 instance
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'server/**'
+      - '.github/workflows/cd.yml'
+
+jobs:
+  deploy:
+    name: Push to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      
+      - name: Deploy to EC2 instance
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: 13.204.64.24
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY_Metaverse }}
+          port: 22
+          script: |
+            echo "🚀 Starting deployment..."
+            
+            # Remove old deployment
+            sudo rm -rf Metaverse || true
+            
+            # Clone the repository
+            echo "📂 Cloning repository..."
+            git clone https://github.com/ayushKhandelwal07/Metaverse.git
+            cd Metaverse/server
+            
+            # Install dependencies
+            echo "📦 Installing dependencies..."
+            npm install
+            
+            # Build the project
+            echo "🔨 Building project..."
+            npm run build
+            
+            # Stop existing backend process
+            echo "🛑 Stopping existing backend..."
+            pm2 stop metaverse-backend || true
+            pm2 delete metaverse-backend || true
+            
+            # Start the backend server
+            echo "🚀 Starting backend server..."
+            pm2 start npm --name "metaverse-backend" -- start
+            pm2 save
+            
+            echo "✅ Backend deployment completed!"
+            pm2 status
