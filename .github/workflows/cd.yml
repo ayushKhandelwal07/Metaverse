@@ -28,6 +28,19 @@ jobs:
           script: |
             echo "🚀 Starting deployment..."
             
+            # Load environment variables
+            source ~/.bashrc || true
+            source ~/.profile || true
+            
+            # Set PATH to include common Node.js locations
+            export PATH=$PATH:/usr/bin:/usr/local/bin:~/.nvm/versions/node/*/bin:/opt/node/bin:/home/ubuntu/.nvm/versions/node/v22.16.0/bin
+            
+            # If nvm is installed, load it
+            if [ -f ~/.nvm/nvm.sh ]; then
+              source ~/.nvm/nvm.sh
+              nvm use node || nvm use default || nvm use v22.16.0 || true
+            fi
+            
             # Remove old deployment
             sudo rm -rf Metaverse || true
             
@@ -38,13 +51,27 @@ jobs:
             cd Metaverse
             cd server
             
+            # Check if npm is available
+            echo "🔍 Checking Node.js and npm..."
+            which node || echo "Node.js not found in PATH"
+            which npm || echo "npm not found in PATH"
+            node --version || echo "Could not get Node version"
+            npm --version || echo "Could not get npm version"
+            
             # Install dependencies
             echo "📦 Installing dependencies..."
-            npm install
+            npm install || /usr/bin/npm install || ~/.nvm/versions/node/*/bin/npm install
             
             # Build the project
             echo "🔨 Building project..."
-            npm run build
+            npm run build || /usr/bin/npm run build || ~/.nvm/versions/node/*/bin/npm run build
+            
+            # Check if pm2 is available, install if not
+            echo "🔍 Checking PM2..."
+            if ! command -v pm2 &> /dev/null; then
+              echo "📦 Installing PM2..."
+              npm install -g pm2 || sudo npm install -g pm2
+            fi
             
             # Stop existing backend process
             echo "🛑 Stopping existing backend..."
