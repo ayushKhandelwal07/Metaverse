@@ -53,12 +53,42 @@ const GameFooter = ({
     const isWebcamOn = useAppSelector((state) => state.webcam.isWebcamOn);
     const isMicOn = useAppSelector((state) => state.webcam.isMicOn);
     const playerNameMap = useAppSelector((state) => state.screen.playerNameMap);
+    const currentPlayerInfo = useAppSelector((state) => state.player);
 
-    // Convert Map to array for participants list
-    const participants = Array.from(playerNameMap.entries()).map(([peerId, username]) => ({
-        peerId,
-        username,
-    }));
+    // Get participants based on whether user is in office or lobby
+    const getParticipants = () => {
+        if (isInsideOffice) {
+            // In office: use playerNameMap (office members only)
+            return Array.from(playerNameMap.entries()).map(([peerId, username]) => ({
+                peerId,
+                username,
+            }));
+        } else {
+            // In lobby: get all players from game scene
+            const gameScene = phaserGame.scene.keys.GameScene as GameScene;
+            if (!gameScene || !gameScene.getAllParticipants) {
+                return [];
+            }
+            
+            const participants = [];
+            
+            // Add current player
+            if (currentPlayerInfo.username) {
+                participants.push({
+                    peerId: currentPlayerInfo.sessionId || 'current',
+                    username: currentPlayerInfo.username,
+                });
+            }
+            
+            // Add other players
+            const otherParticipants = gameScene.getAllParticipants();
+            participants.push(...otherParticipants);
+            
+            return participants;
+        }
+    };
+
+    const participants = getParticipants();
 
     const handleDisconnect = () => {
         const gameInstance = phaserGame.scene.keys.GameScene as GameScene;
@@ -290,7 +320,9 @@ const GameFooter = ({
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                            <p className="text-black">All Participants</p>
+                            <p className="text-black">
+                                {isInsideOffice ? "Office Participants" : "All Participants"}
+                            </p>
                         </TooltipContent>
                     </Tooltip>
 
@@ -327,7 +359,9 @@ const GameFooter = ({
             <Dialog open={showParticipants} onOpenChange={setShowParticipants}>
                 <DialogContent className="bg-[#121214] border-indigo-500/50 text-white">
                     <DialogHeader>
-                        <DialogTitle className="text-indigo-400">All Participants</DialogTitle>
+                        <DialogTitle className="text-indigo-400">
+                            {isInsideOffice ? "Office Participants" : "All Participants"}
+                        </DialogTitle>
                     </DialogHeader>
                     <div className="space-y-2 max-h-64 overflow-y-auto">
                         {participants.length > 0 ? (
@@ -338,11 +372,17 @@ const GameFooter = ({
                                 >
                                     <User className="w-4 h-4 text-indigo-400" />
                                     <span className="text-sm">{participant.username}</span>
+                                    {participant.username === currentPlayerInfo.username && (
+                                        <span className="text-xs text-gray-400">(You)</span>
+                                    )}
                                 </div>
                             ))
                         ) : (
                             <div className="text-center py-4 text-gray-400">
-                                No participants in current office
+                                {isInsideOffice 
+                                    ? "No participants in current office" 
+                                    : "No other participants in lobby"
+                                }
                             </div>
                         )}
                     </div>
