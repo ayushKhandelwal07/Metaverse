@@ -250,6 +250,22 @@ export class GameScene extends Phaser.Scene {
         this.myPlayer.startScreenSharing();
     }
 
+    /**
+     * Get all other players in the lobby for participants list
+     */
+    getAllParticipants() {
+        const participants = [];
+        
+        this.otherPlayers.forEach((player, sessionId) => {
+            participants.push({
+                peerId: sessionId,
+                username: player.usernameText.text,
+            });
+        });
+        
+        return participants;
+    }
+
     async create(data: { network: Network }) {
         if (data.network) {
             this.network = data.network;          // Get network reference

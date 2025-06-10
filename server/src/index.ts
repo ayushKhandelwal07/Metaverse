@@ -23,7 +23,7 @@ const gameServer = new Server({
 gameServer.define("LOBBY_ROOM", LobbyRoom);
 gameServer.define("PUBLIC_ROOM", MyRoom);
 gameServer.define("PRIVATE_ROOM", MyRoom).enableRealtimeListing();
-
+//
 /**
  * Register @colyseus/social routes
  *
