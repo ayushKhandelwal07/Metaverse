@@ -28,101 +28,33 @@ jobs:
           script: |
             echo "🚀 Starting deployment..."
             
-            # Load environment variables
+            # Load Node.js environment
             source ~/.bashrc || true
-            source ~/.profile || true
-            
-            # Set PATH to include common Node.js locations
-            export PATH=$PATH:/usr/bin:/usr/local/bin:~/.nvm/versions/node/*/bin:/opt/node/bin:/home/ubuntu/.nvm/versions/node/v22.16.0/bin
-            
-            # If nvm is installed, load it
+            export PATH=$PATH:/home/ubuntu/.nvm/versions/node/v22.16.0/bin
             if [ -f ~/.nvm/nvm.sh ]; then
               source ~/.nvm/nvm.sh
-              nvm use node || nvm use default || nvm use v22.16.0 || true
+              nvm use v22.16.0 || true
             fi
             
-            # Remove old deployment
+            # Clean and clone
             sudo rm -rf Metaverse || true
-            
-            # Clone the repository
-            echo "📂 Cloning repository..."
             git clone https://github.com/ayushKhandelwal07/Metaverse.git
-            ls
-            cd Metaverse
-            cd server
+            cd Metaverse/server
             
-            # Check if npm is available
-            echo "🔍 Checking Node.js and npm..."
-            which node || echo "Node.js not found in PATH"
-            which npm || echo "npm not found in PATH"
-            node --version || echo "Could not get Node version"
-            npm --version || echo "Could not get npm version"
+            # Install and build
+            npm install
+            npm run build
             
-            # Install dependencies
-            echo "📦 Installing dependencies..."
-            npm install || /usr/bin/npm install || ~/.nvm/versions/node/*/bin/npm install
-            
-            # Build the project
-            echo "🔨 Building project..."
-            npm run build || /usr/bin/npm run build || ~/.nvm/versions/node/*/bin/npm run build
-            
-            # Check if pm2 is available, install if not
-            echo "🔍 Checking PM2..."
-            if ! command -v pm2 &> /dev/null; then
-              echo "📦 Installing PM2..."
-              npm install -g pm2 || sudo npm install -g pm2
-            fi
-            
-            # Stop existing backend process
-            echo "🛑 Stopping existing backend..."
+            # Stop all existing processes
+            pm2 stop metaverse-backend || true
+            pm2 delete metaverse-backend || true
             pm2 stop colyseus-app || true
             pm2 delete colyseus-app || true
+            sudo fuser -k 2567/tcp || true
             
-            # Start the backend server using ecosystem config
-            echo "🚀 Starting backend server..."
+            # Start only metaverse-backend
             pm2 start ecosystem.config.js --env production
             pm2 save
             
-            echo "✅ Backend deployment completed!"
+            echo "✅ Deployment completed!"
             pm2 status
-            
-            # Restart Nginx to ensure proper proxy configuration
-            echo "🔄 Restarting Nginx..."
-            sudo systemctl reload nginx || echo "❌ Could not reload Nginx"
-            
-            # DIAGNOSTIC SECTION - Check what's wrong
-            echo "🔍 === DIAGNOSTIC INFORMATION ==="
-            echo "1. Checking if port 2567 is listening:"
-            sudo netstat -tlnp | grep 2567 || echo "❌ Port 2567 is NOT listening"
-            
-            echo -e "\n2. Checking PM2 status and logs:"
-            pm2 status || echo "❌ Could not get PM2 status"
-            pm2 logs colyseus-app --lines 20 --nostream || echo "❌ Could not get PM2 logs"
-            
-            echo -e "\n3. Testing health check endpoint:"
-            curl -v http://localhost:2567/health || echo "❌ Health check failed"
-            
-            echo -e "\n4. Testing local connection to server:"
-            curl -I http://localhost:2567/colyseus || echo "❌ Local connection to :2567/colyseus failed"
-            
-            echo -e "\n5. Testing if server responds on root:"
-            curl -I http://localhost:2567/ || echo "❌ Local connection to :2567/ failed"
-            
-            echo -e "\n6. Checking what's listening on all ports:"
-            sudo netstat -tlnp | head -20
-            
-            echo -e "\n7. Checking if UFW firewall is blocking:"
-            sudo ufw status || echo "UFW not installed"
-            
-            echo -e "\n8. Testing external connectivity (from inside EC2):"
-            curl -I http://15.206.212.10:2567/health || echo "❌ External IP health check failed"
-            curl -I http://15.206.212.10:2567/ || echo "❌ External IP connection failed"
-            
-            echo -e "\n9. Checking PM2 process details:"
-            pm2 show colyseus-app || echo "❌ Could not show PM2 process details"
-            
-            echo -e "\n10. Checking Nginx status:"
-            sudo systemctl status nginx || echo "❌ Could not check Nginx status"
-            sudo nginx -t || echo "❌ Nginx config test failed"
-            
-            echo "🔍 === END DIAGNOSTICS ==="
