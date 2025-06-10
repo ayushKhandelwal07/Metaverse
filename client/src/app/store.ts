@@ -3,6 +3,7 @@ import chatReducer from "./features/chat/chatSlice";
 import roomReducer from "./features/room/roomSlice";
 import screenReducer from "./features/webRtc/screenSlice";
 import webcamReducer from "./features/webRtc/webcamSlice";
+import playerReducer from "./features/player/playerSlice";
 import { enableMapSet } from "immer";
 
 // Error: [Immer] The plugin for 'MapSet' has not been loaded into Immer.
@@ -15,6 +16,7 @@ const store = configureStore({
         room: roomReducer,
         screen: screenReducer,
         webcam: webcamReducer,
+        player: playerReducer,
     },
 
     middleware: (getDefaultMiddleware) =>

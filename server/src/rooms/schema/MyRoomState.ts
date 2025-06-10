@@ -41,3 +41,59 @@ export class MyRoomState extends Schema {
     @type({ map: "string" }) westOfficeMembers = new MapSchema<string>();
     @type([OfficeChat]) westOfficeChat = new ArraySchema<OfficeChat>();
 }
+
+// {
+//   "players": {
+//     "sessionId1": {
+//       "x": 100,
+//       "y": 200,
+//       "username": "Alice",
+//       "anim": "idle",
+//       "isMicOn": true,
+//       "isWebcamOn": false,
+//       "isDisconnected": false
+//     },
+//     "sessionId2": {
+//       "x": 150,
+//       "y": 250,
+//       "username": "Bob",
+//       "anim": "walk",
+//       "isMicOn": false,
+//       "isWebcamOn": true,
+//       "isDisconnected": false
+//     }
+//   },
+//   "globalChat": [
+//     {
+//       "username": "Alice",
+//       "message": "Hello everyone!",
+//       "type": "REGULAR_MESSAGE"
+//     }
+//   ],
+//   "mainOfficeMembers": {
+//     "sessionId1": "Alice"
+//   },
+//   "mainOfficeChat": [
+//     {
+//       "username": "Alice",
+//       "message": "Welcome to the main office.",
+//       "type": "PLAYER_JOINED"
+//     }
+//   ],
+//   "eastOfficeMembers": {},
+//   "eastOfficeChat": [],
+//   "northOffice1Members": {},
+//   "northOffice1Chat": [],
+//   "northOffice2Members": {},
+//   "northOffice2Chat": [],
+//   "westOfficeMembers": {
+//     "sessionId2": "Bob"
+//   },
+//   "westOfficeChat": [
+//     {
+//       "username": "Bob",
+//       "message": "I'm in the west office.",
+//       "type": "REGULAR_MESSAGE"
+//     }
+//   ]
+// }

@@ -46,7 +46,7 @@ const FloatingActions = ({
                 ease: [0.25, 0.8, 0.25, 1],
                 delay: 0.3,
             }}
-            className="absolute bottom-7 left-[40%] p-4 flex gap-4 bg-[#121214]/50 backdrop-blur-xs shadow-black/30 shadow-lg rounded-lg"
+            className="absolute bottom-0 left-[40%] p-4 flex gap-4 bg-[#121214]/50 backdrop-blur-xs shadow-black/30 shadow-lg rounded-lg"
         >
             <TooltipProvider>
                 {/* Screen Sharing */}

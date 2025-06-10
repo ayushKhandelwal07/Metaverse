@@ -3,27 +3,32 @@ import { useAppSelector } from "./app/hooks";
 import RoomSelection from "./components/RoomSelection/RoomSelection";
 import ScreenShare from "./components/ScreenShare";
 import { useState } from "react";
-import FloatingActions from "./components/FloatingActions";
+import GameFooter from "./components/GameFooter";
 import { AnimatePresence } from "framer-motion";
 import VideoCall from "./components/VideoCall";
 
 function App() {
     const roomJoined = useAppSelector((state) => state.room.roomJoined);
     const showOfficeChat = useAppSelector((state) => state.chat.showOfficeChat);
+    const username = useAppSelector((state) => state.player.username);
     const [screenDialogOpen, setScreenDialogOpen] = useState(false);
+    const [showChat, setShowChat] = useState(false);
 
     return (
         <>
             {!roomJoined && <RoomSelection />}
             {roomJoined && (
                 <>
-                    <Chat />
+                    {showChat && <Chat setShowChat={setShowChat} />}
                     <VideoCall />
                     <AnimatePresence mode="wait">
-                        <FloatingActions
-                            key="floating-buttons"
+                        <GameFooter
+                            key="game-footer"
                             isInsideOffice={showOfficeChat}
+                            username={username}
                             setScreenDialogOpen={setScreenDialogOpen}
+                            setShowChat={setShowChat}
+                            showChat={showChat}
                         />
                     </AnimatePresence>
                 </>

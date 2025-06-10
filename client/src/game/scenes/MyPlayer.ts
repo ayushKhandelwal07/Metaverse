@@ -33,7 +33,10 @@ export class MyPlayer extends Player {
     private network: Network;
     private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
     private officeManager: OfficeManager;
+    // Tracks players who are currently connected via proximity chat
     private proximityPlayers = new Map<string, Player>();
+
+    // tracks timing information for proximity connections
     private proximityTimers = new Map<
         string,
         { enterTime: number; connected: boolean }
