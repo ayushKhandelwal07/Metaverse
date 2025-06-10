@@ -4,6 +4,7 @@ import { MyPlayer } from "./MyPlayer";
 import { Player } from "./Player";
 import { Event, phaserEvents } from "../EventBus";
 import store from "../../app/store";
+import { setPlayerInfo } from "../../app/features/player/playerSlice";
 
 export class GameScene extends Phaser.Scene {
     private static EPSILON = 0.5;
@@ -100,6 +101,9 @@ export class GameScene extends Phaser.Scene {
         y: number
     ) {
         console.log("current player's sessionId: ", sessionId);
+
+        // Store player info in Redux state
+        store.dispatch(setPlayerInfo({ username, character, sessionId }));
 
         const isMicOn = store.getState().webcam.isMicOn;
         const isWebcamOn = store.getState().webcam.isWebcamOn;
