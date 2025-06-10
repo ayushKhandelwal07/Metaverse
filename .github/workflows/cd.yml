@@ -21,7 +21,7 @@ jobs:
       - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: 13.204.64.24
+          host: 15.206.212.10
           username: ubuntu
           key: ${{ secrets.SSH_KEY_Metaverse }}
           port: 22
