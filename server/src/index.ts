@@ -9,6 +9,7 @@ import { MyRoom } from "./rooms/MyRoom";
 // //fix.2 // fix.3-//finaltest
 
 const port = Number(process.env.PORT || 2567);
+const host = process.env.HOST || "0.0.0.0"; // Bind to all interfaces
 const app = express();
 
 app.use(cors());
@@ -32,8 +33,18 @@ gameServer.define("PRIVATE_ROOM", MyRoom).enableRealtimeListing();
  */
 // app.use("/", socialRoutes);
 
+// Add health check endpoint
+app.get("/health", (req, res) => {
+    res.json({ 
+        status: "ok", 
+        timestamp: new Date().toISOString(),
+        port: port,
+        host: host 
+    });
+});
+
 // register colyseus monitor AFTER registering your room handlers
 app.use("/colyseus", monitor());
 
-gameServer.listen(port);
-console.log(`Listening on ws://localhost:${port}`);
+gameServer.listen(port, host);
+console.log(`Listening on ws://${host}:${port}`);
